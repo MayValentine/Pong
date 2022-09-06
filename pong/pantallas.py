@@ -1,13 +1,14 @@
+from ctypes.wintypes import PUINT
 import pygame as pg
 from pong.entidades import Bola, Raqueta
-from pong import ANCHO, ALTO, BLANCO, NARANJA, MAGENTA, NEGRO, FPS, PRIMER_AVISO, SEGUNDO_AVISO, ROJO, TIEMPO_MAXIMO_PARTIDA
+from pong import ANCHO, ALTO, BLANCO, NARANJA, MAGENTA, NEGRO, FPS, PRIMER_AVISO, PUNTUACION_GANADORA, SEGUNDO_AVISO, ROJO, TIEMPO_MAXIMO_PARTIDA
 
 
 class Partida:
-    def __init__(self):
-        self.pantalla_principal = pg.display.set_mode((ANCHO, ALTO))
+    def __init__(self, pantalla, metronomo):
+        self.pantalla_principal = pantalla
+        self.metronomo = metronomo
         pg.display.set_caption("Pong")
-        self.metronomo = pg.time.Clock()
         self.temporizador = TIEMPO_MAXIMO_PARTIDA
 
         self.bola = Bola(ANCHO // 2, ALTO //2, color=BLANCO)
@@ -55,12 +56,16 @@ class Partida:
     def bucle_ppal(self):
         self.bola.vx = 5
         self.bola.vy = -5
+        self.puntuacion1 = 0
+        self.puntuacion2 = 0
+        self.temporizador = TIEMPO_MAXIMO_PARTIDA
 
         game_over = False
+        self.metronomo.tick()
 
         while not game_over and \
-              self.puntuacion1 < 10 and \
-              self.puntuacion2 < 10 and \
+              self.puntuacion1 < PUNTUACION_GANADORA and \
+              self.puntuacion2 < PUNTUACION_GANADORA and \
               self.temporizador > 0:
             
             salto_tiempo = self.metronomo.tick(FPS)
@@ -68,9 +73,9 @@ class Partida:
 
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
-                    game_over = True
+                    return True
 
-            self.raqueta2.mover(pg.K_UP, pg.K_DOWN)
+            self.raqueta2.mover(pg.K_p, pg.K_l)
             self.raqueta1.mover(pg.K_a, pg.K_z)
             quien = self.bola.mover()
             if quien == "RIGHT":
@@ -105,11 +110,43 @@ class Partida:
 
 
 class Menu:
+    def __init__(self, pantalla, metronomo):
+        self.pantalla_principal = pantalla
+        self.metronomo = metronomo
+        pg.display.set_caption("Menu")
+        self.imagenFondo = pg.image.load("pong/images/swpong.jpg")
+        self.fuenteComenzar = pg.font.Font("pong/fonts/silkscreen.ttf", 35)
+        #self.musica = pg.mixer.Sound("pong/sounds/8-Bit.ogg")
+
+    def bucle_ppal(self):
+        game_over = False
+        #self.musica.play(-1)
+
+        while not game_over:
+            for evento in pg.event.get():
+                if evento.type == pg.QUIT:
+                    return True
+
+                if evento.type == pg.KEYDOWN:
+                    if evento.key == pg.K_RETURN:
+                        game_over = True
+                    
+
+            self.pantalla_principal.blit(self.imagenFondo, (0, 0))
+            menu = self.fuenteComenzar.render("Pulsa ENTER para comenzar", True, MAGENTA)
+            self.pantalla_principal.blit(menu, (ANCHO // 8, ALTO - 100))
+            pg.display.flip()
+        #self.musica.stop()
+
+       # return opcion
+
+
+"""
+class Records:
     def __init__(self):
         self.pantalla_principal = pg.display.set_mode((ANCHO, ALTO))
-        pg.display.set_caption("Menu")
+        pg.display.set_caption("Records")
         self.metronomo = pg.time.Clock()
-        self.imagenFondo = pg.image.load("pong/images/portada.jpeg")
         self.fuenteComenzar = pg.font.Font("pong/fonts/silkscreen.ttf", 50)
 
     def bucle_ppal(self):
@@ -125,6 +162,7 @@ class Menu:
                         game_over = True
 
             self.pantalla_principal.blit(self.imagenFondo, (0, 0))
-            menu = self.fuenteComenzar.render("Pulsa ENTER para comenzar", True, MAGENTA)
+            menu = self.fuenteComenzar.render("Ha ganado Pancho", True, MAGENTA)
             self.pantalla_principal.blit(menu, (ANCHO // 2, ALTO - 200))
-            pg.display.flip()
+            pg.display.flip()           
+"""

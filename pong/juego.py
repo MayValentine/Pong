@@ -1,17 +1,27 @@
 import pygame as pg
-from pong import ALTO, ANCHO
-from pong.pantallas import Menu, Partida, Records
+from pong import ANCHO, ALTO
+from pong.pantallas import Menu, Partida
 
-class Juego:
+class Controlador:
     def __init__(self):
-        self.pantalla_ppal = pg.display.set_mode((ANCHO, ALTO))
-        self.metronomo = pg.time.Clock()
+        pantalla_principal = pg.display.set_mode((ANCHO, ALTO))
+        metronomo = pg.time.Clock()
 
-        self.escenas = [
-            Menu(self.pantalla_ppal, self.metronomo),
-            Partida(self.pantalla_ppal, self.metronomo)
-        ]
+        self.pantallas = [Menu(pantalla_principal, metronomo), Partida(pantalla_principal, metronomo)]
+        
+        self.menu = Menu(pantalla_principal, metronomo)
+        self.partida = Partida(pantalla_principal, metronomo)
+       
+        
+    def jugar(self):
+        salida = False
+        ix = 0
+        while not salida:
 
-    def start(self):
-        #TODO: Poner lógica de navegación entre escenas
-        pass
+            salida = self.pantallas[ix].bucle_ppal()
+            ix += 1
+            if ix >= len(self.pantallas):
+                ix = 0
+            
+           # ix = (ix + 1) % len(self.pantallas)
+
