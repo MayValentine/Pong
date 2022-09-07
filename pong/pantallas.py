@@ -12,9 +12,10 @@ class Partida:
         self.temporizador = TIEMPO_MAXIMO_PARTIDA
 
         self.bola = Bola(ANCHO // 2, ALTO //2, color=BLANCO)
-        self.raqueta1 = Raqueta(20, ALTO//2, w=20, h=120, color=BLANCO)
+        self.raqueta1 = Raqueta(20, ALTO//2, w=30, h=114)
         self.raqueta1.vy = 5
-        self.raqueta2 = Raqueta(ANCHO - 20, ALTO//2, w=20, h=120, color=BLANCO)
+        self.raqueta2 = Raqueta(ANCHO - 20, ALTO//2, w=30, h=114)
+        self.raqueta2.direccion = 'drcha'
         self.raqueta2.vy = 5
 
         self.puntuacion1 = 0
@@ -134,7 +135,7 @@ class Menu:
 
             self.pantalla_principal.blit(self.imagenFondo, (0, 0))
             menu = self.fuenteComenzar.render("Pulsa ENTER para comenzar", True, MAGENTA)
-            self.pantalla_principal.blit(menu, (ANCHO // 8, ALTO - 100))
+            self.pantalla_principal.blit(menu, (100, ALTO - 100))
             pg.display.flip()
         #self.musica.stop()
 

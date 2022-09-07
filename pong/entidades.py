@@ -68,6 +68,12 @@ class Bola:
         return self.center_y + self.radio
 
 class Raqueta:
+
+    file_imagenes = {
+        "izqda": ["electric00b_.png",  "electric01b_.png", "electric02b_.png"],
+        "drcha": ["electric00.png", "electric01.png", "electric02.png"]
+    }
+
     def __init__(self, center_x, center_y, w=120, h=20, color=(255, 255, 0)):
         self.center_x = center_x
         self.center_y = center_y
@@ -78,8 +84,46 @@ class Raqueta:
         self.vx = 0
         self.vy = 0
 
+        self.imagenes = self.__cargar_imagenes()
+        self.direccion = 'izqda'
+        self.imagen_activa = 0
+        self.cambio_cada_x_fotogramas = 5
+        self.cuenta_fotogramas = 0
+
+
+        #self._imagen = pg.image.load(f"pong/images/{self.imagenes['izqda']}")
+
+    def __cargar_imagenes(self):
+        imagenes = {}         #para buscar en el diccionario
+        for lado in self.file_imagenes:
+            imagenes[lado] = []           #para buscar en las listas de dentro del diccionario
+            for nombre_fichero in self.file_imagenes[lado]:
+                foto = pg.image.load(f"pong/images/{nombre_fichero}")
+                imagenes[lado].append(foto)
+
+        return imagenes
+    """
+    @property
+    def imagen(self):
+        return self._imagen
+
+    @imagen.setter
+    def imagen(self,valor):
+        self._imagen = pg.image.load(f"pong/images/{self.imagenes[valor]}")
+    """    
+
     def dibujar(self, pantalla):
-        pg.draw.rect(pantalla, self.color, (self.center_x - self.w // 2, self.center_y - self.h // 2, self.w, self.h))
+        #pg.draw.rect(pantalla, self.color, (self.center_x - self.w // 2, self.center_y - self.h // 2, self.w, self.h))
+        #pantalla.blit(self.imagen, (self.center_x - self.w // 2, self.center_y - self.h // 2))
+        pantalla.blit(self.imagenes[self.direccion][self.imagen_activa],(self.center_x - self.w // 2, self.center_y - self.h // 2))
+        self.cuenta_fotogramas += 1
+        if self.cuenta_fotogramas == self.cambio_cada_x_fotogramas:
+            self.imagen_activa += 1
+            if self.imagen_activa >= len(self.imagenes[self.direccion]):
+                self.imagen_activa = 0
+            self.cuenta_fotogramas = 0
+
+
 
     def mover(self, tecla_arriba, tecla_abajo, y_max=600):
         estado_teclas = pg.key.get_pressed()
